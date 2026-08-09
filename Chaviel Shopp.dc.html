@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="theme-color" content="#0B0B0B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Rubik+Wet+Paint&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#0B0B0B; overflow-x:hidden; }
+  body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y:none; text-size-adjust:100%; -webkit-text-size-adjust:100%; }
+  * { -webkit-tap-highlight-color: rgba(250,250,250,0.08); }
+  img { -webkit-user-drag:none; user-select:none; }
+  button { touch-action: manipulation; }
+  a { color:#FAFAFA; text-decoration:none; }
+  a:hover { color:#A1A1A1; }
+  *:focus-visible { outline:2px solid #FAFAFA; outline-offset:2px; }
+  ::selection { background:#262626; }
+  input, select, button { font-family: Inter, system-ui, sans-serif; }
+  .noscroll::-webkit-scrollbar { display:none; }
+</style>
+</helmet>
+
+<div style="background:#0B0B0B; color:#FAFAFA; min-height:100dvh; max-width:760px; margin:0 auto; padding-bottom:calc(140px + env(safe-area-inset-bottom))">
+
+<sc-if value="{{ enTienda }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; align-items:center; gap:6px; padding:20px 16px 22px; background:#161616; border-bottom:1px solid #262626">
+    <div style="font-family:'Rubik Wet Paint', 'Bebas Neue', Inter, sans-serif; font-size:34px; line-height:1; color:#FAFAFA">NEXT DROP</div>
+    <div style="display:flex; align-items:baseline; gap:10px; font-family:'Rubik Wet Paint', 'Bebas Neue', Inter, sans-serif; font-size:46px; line-height:1.1; color:#EF4444">
+      <span>{{ dropDias }}</span><span style="font-size:13px; color:#A1A1A1; font-family:Inter, sans-serif; letter-spacing:0.1em">D</span>
+      <span>{{ dropHoras }}</span><span style="font-size:13px; color:#A1A1A1; font-family:Inter, sans-serif; letter-spacing:0.1em">H</span>
+      <span>{{ dropMin }}</span><span style="font-size:13px; color:#A1A1A1; font-family:Inter, sans-serif; letter-spacing:0.1em">M</span>
+      <span>{{ dropSeg }}</span><span style="font-size:13px; color:#A1A1A1; font-family:Inter, sans-serif; letter-spacing:0.1em">S</span>
+    </div>
+  </div>
+
+  <div style="position:sticky; top:0; z-index:30; background:rgba(11,11,11,0.94); backdrop-filter:blur(10px); border-bottom:1px solid #262626; padding:calc(10px + env(safe-area-inset-top)) 12px 10px; display:flex; align-items:center; gap:8px">
+    <button onClick="{{ irHome }}" style="flex:1; text-align:left; background:none; border:none; color:#FAFAFA; font-family:'Bebas Neue', Inter, sans-serif; font-size:20px; letter-spacing:0.06em; cursor:pointer; padding:0">CHAVIEL SHOPP</button>
+    <button onClick="{{ toggleBusqueda }}" aria-label="Buscar" style="flex:0 0 auto; width:42px; height:42px; display:flex; align-items:center; justify-content:center; background:#161616; border:1px solid #262626; border-radius:999px; color:#FAFAFA; cursor:pointer" style-hover="border-color:#A1A1A1">
+      <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+    </button>
+    <button onClick="{{ toggleCarrito }}" aria-label="Tu pedido" style="position:relative; flex:0 0 auto; width:42px; height:42px; display:flex; align-items:center; justify-content:center; background:#161616; border:1px solid #262626; border-radius:999px; color:#FAFAFA; cursor:pointer" style-hover="border-color:#A1A1A1">
+      <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M216,64H176a48,48,0,0,0-96,0H40A16,16,0,0,0,24,80V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64ZM128,32a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32Zm88,168H40V80H80v24a8,8,0,0,0,16,0V80h64v24a8,8,0,0,0,16,0V80h40V200Z"></path></svg>
+      <sc-if value="{{ hayCarrito }}" hint-placeholder-val="{{ false }}">
+        <span style="position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 5px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:#EF4444; color:#FAFAFA; border-radius:999px; font-size:11px; font-weight:700">{{ cartCount }}</span>
+      </sc-if>
+    </button>
+  </div>
+
+  <sc-if value="{{ verBusqueda }}" hint-placeholder-val="{{ false }}">
+    <div style="position:sticky; top:62px; z-index:29; background:#0B0B0B; border-bottom:1px solid #262626; padding:12px">
+      <input value="{{ fBusqueda }}" onChange="{{ setBusqueda }}" placeholder="Buscar prenda, marca o SKU" autoFocus="{{ true }}" style="background:#161616; border:1px solid #262626; border-radius:999px; color:#FAFAFA; font-size:16px; padding:13px 16px; width:100%; box-sizing:border-box">
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ verCarrito }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; top:calc(70px + env(safe-area-inset-top)); right:8px; left:8px; max-width:380px; margin-left:auto; z-index:40; background:#161616; border:1px solid #262626; border-radius:12px; box-shadow:0 18px 40px rgba(0,0,0,0.55); padding:18px">
+      <div style="display:flex; align-items:flex-start; gap:12px">
+        <div style="flex:1; font-family:'Bebas Neue', Inter, sans-serif; font-size:26px; letter-spacing:0.02em">Tu pedido</div>
+        <button onClick="{{ cerrarCarrito }}" aria-label="Cerrar" style="background:none; border:none; color:#A1A1A1; font-size:20px; line-height:1; cursor:pointer; padding:0">✕</button>
+      </div>
+      <div style="display:grid; gap:14px; margin-top:16px">
+        <sc-for list="{{ carritoVista }}" as="it" hint-placeholder-count="0">
+          <div style="display:flex; gap:12px; align-items:center">
+            {{ it.thumb }}
+            <div style="flex:1; min-width:0">
+              <div style="font-size:14px; font-weight:600; line-height:1.25">{{ it.nombre }}</div>
+              <div style="font-size:13px; color:#A1A1A1; margin-top:4px">{{ it.precioFmt }}</div>
+            </div>
+            <button onClick="{{ it.quitar }}" aria-label="Quitar" style="flex:0 0 auto; background:none; border:none; color:#A1A1A1; cursor:pointer; padding:6px" style-hover="color:#EF4444">
+              <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path></svg>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="height:1px; background:#262626; margin:16px 0"></div>
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <span style="font-size:12px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Total</span>
+        <span style="font-family:'Bebas Neue', Inter, sans-serif; font-size:30px">{{ totalFmt }}</span>
+      </div>
+      <button onClick="{{ irCheckout }}" style="width:100%; margin-top:14px; background:#FAFAFA; color:#0B0B0B; border:none; border-radius:10px; padding:16px; font-size:16px; font-weight:700; cursor:pointer" style-hover="background:#E2E2E2">Finalizar compra</button>
+    </div>
+  </sc-if>
+</sc-if>
+
+<sc-if value="{{ esHome }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:26px 16px 8px">
+    <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:44px; line-height:0.95; letter-spacing:0.04em">CHAVIEL SHOPP</div>
+    <div style="font-size:12px; letter-spacing:0.28em; color:#A1A1A1; margin-top:8px; text-transform:uppercase">Indumentaria exclusiva</div>
+    <div style="font-size:13px; color:#A1A1A1; margin-top:10px">📍 Punta Alta, Buenos Aires</div>
+    <div style="height:1px; background:#262626; margin:20px 0 16px"></div>
+    <div style="font-size:15px; line-height:1.5; color:#FAFAFA">Buenas gente! Acá está todo lo que hay ahora.</div>
+    <div style="font-size:14px; line-height:1.5; color:#A1A1A1; margin-top:6px">Cada prenda es una sola unidad y un solo talle. Se vende y no vuelve.</div>
+    <sc-if value="{{ hayCarrito }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ irCheckout }}" style="margin-top:16px; background:#161616; border:1px solid #FAFAFA; color:#FAFAFA; border-radius:999px; padding:12px 20px; font-size:15px; font-weight:600; cursor:pointer" style-hover="background:#1E1E1E">Tu pedido ({{ cartCount }}) →</button>
+    </sc-if>
+  </div>
+
+  <div style="padding:18px 16px 4px">
+    <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase; margin-bottom:10px">Categoría</div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px">
+      <sc-for list="{{ chipsCat }}" as="c" hint-placeholder-count="6">
+        <sc-if value="{{ c.on }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ c.toggle }}" style="border:1px solid #FAFAFA; background:#FAFAFA; color:#0B0B0B; border-radius:999px; padding:9px 16px; font-size:14px; font-weight:600; cursor:pointer">{{ c.label }}</button>
+        </sc-if>
+        <sc-if value="{{ c.off }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ c.toggle }}" style="border:1px solid #262626; background:#161616; color:#FAFAFA; border-radius:999px; padding:9px 16px; font-size:14px; font-weight:500; cursor:pointer" style-hover="border-color:#A1A1A1">{{ c.label }}</button>
+        </sc-if>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:18px 16px 4px">
+    <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase; margin-bottom:10px">Talle</div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px">
+      <sc-for list="{{ chipsTalle }}" as="c" hint-placeholder-count="4">
+        <sc-if value="{{ c.on }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ c.toggle }}" style="border:1px solid #FAFAFA; background:#FAFAFA; color:#0B0B0B; border-radius:999px; padding:9px 18px; font-size:14px; font-weight:600; cursor:pointer">{{ c.label }}</button>
+        </sc-if>
+        <sc-if value="{{ c.off }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ c.toggle }}" style="border:1px solid #262626; background:#161616; color:#FAFAFA; border-radius:999px; padding:9px 18px; font-size:14px; font-weight:500; cursor:pointer" style-hover="border-color:#A1A1A1">{{ c.label }}</button>
+        </sc-if>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ hayFiltros }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:14px 16px 0">
+      <button onClick="{{ limpiarFiltros }}" style="background:none; border:none; color:#A1A1A1; font-size:13px; text-decoration:underline; cursor:pointer; padding:0">limpiar filtros</button>
+    </div>
+  </sc-if>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:20px 16px 0">
+    <sc-for list="{{ vista }}" as="p" hint-placeholder-count="8">
+      <sc-if value="{{ p.libre }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ p.abrir }}" style="background:#161616; border:1px solid #262626; border-radius:10px; overflow:hidden; cursor:pointer" style-hover="border-color:#A1A1A1">
+          <img src="{{ p.foto }}" alt="{{ p.nombre }}" loading="lazy" style="display:block; width:100%; aspect-ratio:3/4; object-fit:cover; background:#1E1E1E">
+          <div style="padding:10px 10px 12px">
+            <span style="display:inline-block; font-size:11px; font-weight:600; color:#22C55E; background:rgba(34,197,94,0.12); border-radius:4px; padding:3px 7px">Disponible✅</span>
+            <div style="font-size:14px; font-weight:600; margin-top:8px; line-height:1.25">{{ p.nombre }}</div>
+            <div style="font-size:12px; color:#A1A1A1; margin-top:4px">{{ p.talleLabel }}</div>
+            <div style="font-size:12px; color:#A1A1A1; margin-top:2px">Estado: {{ p.estado }}</div>
+            <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:24px; letter-spacing:0.02em; margin-top:8px">{{ p.precioFmt }}</div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ p.vendido }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#161616; border:1px solid #262626; border-radius:10px; overflow:hidden; opacity:0.5">
+          <div style="position:relative">
+            <img src="{{ p.foto }}" alt="{{ p.nombre }}" loading="lazy" style="display:block; width:100%; aspect-ratio:3/4; object-fit:cover; background:#1E1E1E; filter:grayscale(1)">
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(11,11,11,0.55)">
+              <span style="font-size:14px; font-weight:700; color:#EF4444">{{ p.badge }}</span>
+            </div>
+          </div>
+          <div style="padding:10px 10px 12px">
+            <span style="display:inline-block; font-size:11px; font-weight:600; color:#EF4444; background:rgba(239,68,68,0.12); border-radius:4px; padding:3px 7px">{{ p.badge }}</span>
+            <div style="font-size:14px; font-weight:600; margin-top:8px; line-height:1.25; color:#A1A1A1">{{ p.nombre }}</div>
+            <div style="font-size:12px; color:#A1A1A1; margin-top:4px">{{ p.talleLabel }}</div>
+            <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:24px; color:#A1A1A1; margin-top:8px; text-decoration:line-through">{{ p.precioFmt }}</div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ sinResultados }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:40px 16px; text-align:center; color:#A1A1A1; font-size:15px">No hay nada con esos filtros. Probá sacando alguno.</div>
+  </sc-if>
+
+  <div style="margin:36px 16px 0; border:1px solid #262626; border-radius:10px; padding:18px">
+    <div style="font-size:15px; font-weight:700; color:#EF4444">SIN DEVOLUCIONES 🚫</div>
+    <div style="font-size:14px; color:#A1A1A1; line-height:1.5; margin-top:8px">No hago devoluciones, por eso te paso todas las fotos y medidas antes 🙌🏽</div>
+    <div style="font-size:14px; color:#A1A1A1; line-height:1.5; margin-top:14px"><br></div><p style="margin: 0">Más información por mensaje 📩</p><div style="font-size:14px; color:#A1A1A1; line-height:1.5; margin-top:6px"><br></div>
+    
+  </div>
+</sc-if>
+
+<sc-if value="{{ esProducto }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:12px 16px 4px">
+    <button onClick="{{ irHome }}" style="background:none; border:none; color:#A1A1A1; font-size:14px; cursor:pointer; padding:0" style-hover="color:#FAFAFA">← Volver</button>
+  </div>
+
+  <div style="position:relative">
+    <div class="noscroll" style="display:flex; overflow-x:auto; scroll-snap-type:x mandatory; padding:6px 0; scrollbar-width:none">
+      {{ galeria }}
+    </div>
+    <sc-if value="{{ variasFotos }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ fotoAnterior }}" aria-label="Foto anterior" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:999px; border:none; background:#FAFAFA; color:#0B0B0B; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.45)" style-hover="background:#E2E2E2">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path></svg>
+      </button>
+      <button onClick="{{ fotoSiguiente }}" aria-label="Foto siguiente" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:999px; border:none; background:#FAFAFA; color:#0B0B0B; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,0.45)" style-hover="background:#E2E2E2">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path></svg>
+      </button>
+    </sc-if>
+  </div>
+
+  <div style="padding:18px 16px 0">
+    <sc-if value="{{ pLibre }}" hint-placeholder-val="{{ true }}">
+      <span style="display:inline-block; font-size:12px; font-weight:600; color:#22C55E; background:rgba(34,197,94,0.12); border-radius:5px; padding:5px 10px">Disponible✅</span>
+    </sc-if>
+    <sc-if value="{{ pVendido }}" hint-placeholder-val="{{ false }}">
+      <span style="display:inline-block; font-size:12px; font-weight:600; color:#EF4444; background:rgba(239,68,68,0.12); border-radius:5px; padding:5px 10px">{{ pBadge }}</span>
+    </sc-if>
+    <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:38px; line-height:1.05; letter-spacing:0.02em; margin-top:12px">{{ pNombre }}</div>
+    <div style="font-size:15px; color:#FAFAFA; margin-top:10px">{{ pTalleLabel }}</div>
+    <div style="font-size:15px; color:#A1A1A1; margin-top:4px">Estado: {{ pEstado }}</div>
+    <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:44px; letter-spacing:0.02em; margin-top:14px">{{ pPrecioFmt }}</div>
+  </div>
+
+  <div style="margin:20px 16px 0; border:1px solid #262626; border-radius:10px; padding:16px">
+    <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Formas de pago</div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px">
+      <span style="font-size:14px; background:#161616; border:1px solid #262626; border-radius:999px; padding:7px 13px">Contado 💵</span>
+      <span style="font-size:14px; background:#161616; border:1px solid #262626; border-radius:999px; padding:7px 13px">2 o 3 cuotas con interés mínimo 💳</span>
+    </div>
+  </div>
+
+  <div style="margin:14px 16px 0; border:1px solid #262626; border-radius:10px; padding:16px">
+    <div style="font-size:15px; font-weight:700; color:#EF4444">SIN DEVOLUCIONES 🚫</div>
+    <div style="font-size:14px; color:#A1A1A1; line-height:1.5; margin-top:8px">No hago devoluciones, por eso te paso todas las fotos y medidas antes 🙌🏽</div>
+    <div style="font-size:14px; color:#A1A1A1; line-height:1.5; margin-top:8px">Cualquier cosa consultar talles!</div>
+  </div>
+
+  <div style="padding:34px 16px 0">
+    <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase; margin-bottom:12px">Parecidas</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+      <sc-for list="{{ relacionadas }}" as="r" hint-placeholder-count="4">
+        <div onClick="{{ r.abrir }}" style="background:#161616; border:1px solid #262626; border-radius:10px; overflow:hidden; cursor:pointer" style-hover="border-color:#A1A1A1">
+          <img src="{{ r.foto }}" alt="{{ r.nombre }}" loading="lazy" style="display:block; width:100%; aspect-ratio:3/4; object-fit:cover; background:#1E1E1E">
+          <div style="padding:10px 10px 12px">
+            <div style="font-size:13px; font-weight:600; line-height:1.25">{{ r.nombre }}</div>
+            <div style="font-size:12px; color:#A1A1A1; margin-top:4px">{{ r.talleLabel }}</div>
+            <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:21px; margin-top:6px">{{ r.precioFmt }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="position:fixed; left:0; right:0; bottom:0; background:#0B0B0B; border-top:1px solid #262626; padding:12px 16px calc(16px + env(safe-area-inset-bottom)); z-index:20">
+    <div style="max-width:760px; margin:0 auto; display:flex; align-items:center; gap:12px">
+      <div style="flex:1; min-width:0">
+        <div style="font-size:12px; color:#A1A1A1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ pNombre }}</div>
+        <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:26px; line-height:1">{{ pPrecioFmt }}</div>
+      </div>
+      <sc-if value="{{ pLibre }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ fueraCarrito }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ agregar }}" style="flex:0 0 auto; background:#161616; color:#FAFAFA; border:1px solid #262626; border-radius:10px; padding:16px 18px; font-size:15px; font-weight:600; cursor:pointer" style-hover="border-color:#A1A1A1">Agregar</button>
+        </sc-if>
+        <sc-if value="{{ enCarrito }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:0 0 auto; color:#22C55E; font-size:14px; font-weight:600">Agregada✅</div>
+        </sc-if>
+        <button onClick="{{ comprar }}" style="flex:0 0 auto; background:#FAFAFA; color:#0B0B0B; border:none; border-radius:10px; padding:16px 26px; font-size:16px; font-weight:700; cursor:pointer" style-hover="background:#E2E2E2">COMPRAR</button>
+      </sc-if>
+      <sc-if value="{{ pVendido }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:0 0 auto; background:#161616; color:#EF4444; border:1px solid #262626; border-radius:10px; padding:16px 26px; font-size:16px; font-weight:700">{{ pBadge }}</div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ esCheckout }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid #262626">
+    <button onClick="{{ volverProducto }}" style="background:#161616; border:1px solid #262626; color:#FAFAFA; border-radius:8px; width:38px; height:38px; font-size:18px; cursor:pointer" style-hover="border-color:#A1A1A1">←</button>
+    <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:20px; letter-spacing:0.06em">TU PEDIDO</div>
+  </div>
+
+  <div style="margin:16px; border:1px solid #262626; border-radius:10px; padding:18px">
+    <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Resumen</div>
+    <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:32px; letter-spacing:0.02em; margin-top:2px">Tu pedido</div>
+
+    <div style="display:grid; gap:16px; margin-top:16px">
+      <sc-for list="{{ carritoVista }}" as="it" hint-placeholder-count="0">
+        <div style="display:flex; gap:12px; align-items:flex-start">
+          {{ it.thumb }}
+          <div style="flex:1; min-width:0">
+            <div style="font-size:15px; font-weight:600; line-height:1.25">{{ it.nombre }}</div>
+            <div style="font-size:12px; letter-spacing:0.1em; color:#A1A1A1; margin-top:5px">{{ it.meta }}</div>
+            <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:24px; margin-top:6px">{{ it.precioFmt }}</div>
+            <button onClick="{{ it.quitar }}" style="background:none; border:none; color:#A1A1A1; font-size:12px; text-decoration:underline; cursor:pointer; padding:0; margin-top:6px">quitar</button>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ carritoVacio }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:14px; color:#A1A1A1; margin-top:14px">No tenés nada agregado todavía.</div>
+    </sc-if>
+
+    <div style="height:1px; background:#262626; margin:18px 0 14px"></div>
+    <div style="display:flex; justify-content:space-between; font-size:14px; color:#A1A1A1">
+      <span>Subtotal</span><span style="color:#FAFAFA">{{ subtotalFmt }}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; font-size:14px; color:#A1A1A1; margin-top:8px">
+      <span>Envío</span>
+      <sc-if value="{{ envioGratis }}" hint-placeholder-val="{{ false }}"><span style="color:#22C55E; font-weight:600">Gratis</span></sc-if>
+      <sc-if value="{{ envioACoordinar }}" hint-placeholder-val="{{ true }}"><span style="color:#F59E0B; font-weight:600">{{ envioLabel }}</span></sc-if>
+    </div>
+    <div style="height:1px; background:#262626; margin:14px 0"></div>
+    <div style="display:flex; justify-content:space-between; align-items:baseline">
+      <span style="font-family:'Bebas Neue', Inter, sans-serif; font-size:26px; letter-spacing:0.02em">Total</span>
+      <span style="font-family:'Bebas Neue', Inter, sans-serif; font-size:32px">{{ totalFmt }}</span>
+    </div>
+  </div>
+
+  <div style="padding:8px 16px 0; display:grid; gap:18px">
+    <label style="display:grid; gap:7px">
+      <span style="font-size:13px; color:#A1A1A1">Nombre y apellido</span>
+      <input value="{{ fNombre }}" onChange="{{ setNombre }}" placeholder="Cómo te llamás" style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box">
+    </label>
+    <label style="display:grid; gap:7px">
+      <span style="font-size:13px; color:#A1A1A1">Teléfono (WhatsApp)</span>
+      <input value="{{ fTel }}" onChange="{{ setTel }}" placeholder="2932 445566" inputMode="numeric" type="tel" style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box">
+      <sc-if value="{{ telError }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size:12px; color:#EF4444">Poné el número con característica, sin 0 ni 15. Ej: 2932 445566</span>
+      </sc-if>
+    </label>
+
+    <div style="display:grid; gap:9px">
+      <span style="font-size:13px; color:#A1A1A1">Entrega</span>
+      <sc-for list="{{ opcEntrega }}" as="o" hint-placeholder-count="3">
+        <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ o.pick }}" style="text-align:left; background:#161616; border:1px solid #FAFAFA; border-radius:8px; color:#FAFAFA; font-size:15px; font-weight:600; padding:14px 12px; cursor:pointer">{{ o.label }}</button>
+        </sc-if>
+        <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ o.pick }}" style="text-align:left; background:#161616; border:1px solid #262626; border-radius:8px; color:#A1A1A1; font-size:15px; padding:14px 12px; cursor:pointer" style-hover="border-color:#A1A1A1">{{ o.label }}</button>
+        </sc-if>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ esRetiro }}" hint-placeholder-val="{{ false }}">
+      <div style="border:1px solid #262626; border-radius:10px; padding:16px">
+        <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Retirás en</div>
+        <div style="font-size:17px; font-weight:600; margin-top:6px">Albatros 14, casa 313</div>
+        <div style="font-size:14px; color:#A1A1A1; margin-top:4px">Punta Alta, Buenos Aires</div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ pideDireccion }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid; gap:16px; border:1px solid #262626; border-radius:10px; padding:16px">
+        <div style="font-size:13px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Datos de envío</div>
+        <sc-if value="{{ esOtra }}" hint-placeholder-val="{{ false }}">
+          <label style="display:grid; gap:7px">
+            <span style="font-size:13px; color:#A1A1A1">Código postal</span>
+            <input value="{{ fCp }}" onChange="{{ setCp }}" placeholder="Ej: 8109" inputMode="numeric" style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box">
+          </label>
+          <label style="display:grid; gap:7px">
+            <span style="font-size:13px; color:#A1A1A1">Localidad</span>
+            <input value="{{ fLocalidad }}" onChange="{{ setLocalidad }}" placeholder="Ciudad o pueblo" style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box">
+          </label>
+          <label style="display:grid; gap:7px">
+            <span style="font-size:13px; color:#A1A1A1">Provincia</span>
+            <select value="{{ fProvincia }}" onChange="{{ setProvincia }}" style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box; appearance:none">
+              <option value="">Elegí tu provincia</option>
+              <sc-for list="{{ provincias }}" as="pr" hint-placeholder-count="0">
+                <option value="{{ pr }}">{{ pr }}</option>
+              </sc-for>
+            </select>
+          </label>
+        </sc-if>
+        <label style="display:grid; gap:7px">
+          <span style="font-size:13px; color:#A1A1A1">Domicilio</span>
+          <input value="{{ fDomicilio }}" onChange="{{ setDomicilio }}" placeholder="Calle y número" style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box">
+        </label>
+        <label style="display:grid; gap:7px">
+          <span style="font-size:13px; color:#A1A1A1">Observaciones</span>
+          <textarea value="{{ fObs }}" onChange="{{ setObs }}" rows="3" placeholder="Piso, departamento, entre calles..." style="background:#161616; border:1px solid #262626; border-radius:8px; color:#FAFAFA; font-size:16px; padding:14px 12px; width:100%; box-sizing:border-box; resize:vertical; font-family:inherit"></textarea>
+        </label>
+      </div>
+    </sc-if>
+
+    <div style="display:grid; gap:12px; border:1px solid #262626; border-radius:10px; padding:16px">
+      <div style="font-size:13px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Pago por transferencia 💵</div>
+      <div style="font-size:14px; color:#A1A1A1; line-height:1.5">Transferí el total y subí el comprobante acá abajo. Sin eso no queda tomado el pedido.</div>
+      <div style="border:1px dashed #262626; border-radius:8px; padding:12px">
+        <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Datos para transferir</div>
+        <div style="font-size:12px; color:#A1A1A1; margin-top:8px">Alias</div>
+        <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:30px; letter-spacing:0.06em; margin-top:2px">ch.shopp77</div>
+      </div>
+      <sc-if value="{{ sinComprobante }}" hint-placeholder-val="{{ true }}">
+        <label style="display:block; background:#161616; border:1px solid #262626; border-radius:8px; padding:16px 12px; text-align:center; font-size:15px; font-weight:600; cursor:pointer" style-hover="border-color:#A1A1A1">
+          Subir comprobante 📩
+          <input type="file" accept="image/*,application/pdf" onChange="{{ setComprobante }}" style="display:none">
+        </label>
+      </sc-if>
+      <sc-if value="{{ hayComprobante }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; gap:10px; background:#161616; border:1px solid #22C55E; border-radius:8px; padding:14px 12px">
+          <span style="flex:1; min-width:0; font-size:14px; color:#22C55E; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">{{ fComprobante }}</span>
+          <button onClick="{{ quitarComprobante }}" style="background:none; border:none; color:#A1A1A1; font-size:13px; text-decoration:underline; cursor:pointer; padding:0">cambiar</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="border:1px solid #262626; border-radius:10px; padding:14px">
+      <div style="font-size:14px; font-weight:700; color:#EF4444">SIN DEVOLUCIONES 🚫</div>
+      <div style="font-size:13px; color:#A1A1A1; line-height:1.5; margin-top:6px">Al confirmar el pedido ya sabés que no hay devoluciones. Cualquier duda, escribime antes 📩</div>
+    </div>
+
+    <sc-if value="{{ falta }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size:13px; color:#A1A1A1">Completá nombre, teléfono, entrega y subí el comprobante para confirmar.</div>
+    </sc-if>
+  </div>
+
+  <div style="position:fixed; left:0; right:0; bottom:0; background:#0B0B0B; border-top:1px solid #262626; padding:12px 16px calc(16px + env(safe-area-inset-bottom)); z-index:20">
+    <div style="max-width:760px; margin:0 auto">
+      <sc-if value="{{ listo }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ confirmar }}" style="width:100%; background:#FAFAFA; color:#0B0B0B; border:none; border-radius:10px; padding:17px; font-size:16px; font-weight:700; cursor:pointer" style-hover="background:#E2E2E2">Confirmar pedido</button>
+      </sc-if>
+      <sc-if value="{{ falta }}" hint-placeholder-val="{{ true }}">
+        <div style="width:100%; background:#161616; color:#A1A1A1; border:1px solid #262626; border-radius:10px; padding:17px; font-size:16px; font-weight:700; text-align:center; box-sizing:border-box">Confirmar pedido</div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ esListo }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:56px 16px 0">
+    <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:40px; line-height:1.05">Listo! 🙌🏽</div>
+    <div style="font-size:16px; color:#A1A1A1; line-height:1.55; margin-top:12px">Ya me llegó tu comprobante. En un rato te escribo por WhatsApp para coordinar. Guardá tu número de pedido.</div>
+
+    <div style="margin-top:24px; border:1px solid #262626; border-radius:10px; padding:16px">
+      <div style="font-size:11px; letter-spacing:0.18em; color:#A1A1A1; text-transform:uppercase">Pedido</div>
+      <div style="font-family:'Bebas Neue', Inter, sans-serif; font-size:34px; letter-spacing:0.06em; margin-top:4px">{{ nroPedido }}</div>
+      <div style="height:1px; background:#262626; margin:16px 0"></div>
+      <div style="display:grid; gap:14px">
+        <sc-for list="{{ carritoVista }}" as="it" hint-placeholder-count="0">
+          <div style="display:flex; gap:12px; align-items:center">
+            {{ it.thumb }}
+            <div style="min-width:0">
+              <div style="font-size:15px; font-weight:600">{{ it.nombre }}</div>
+              <div style="font-size:12px; letter-spacing:0.1em; color:#A1A1A1; margin-top:4px">{{ it.meta }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="height:1px; background:#262626; margin:16px 0"></div>
+      <div style="display:flex; justify-content:space-between; align-items:baseline">
+        <span style="font-family:'Bebas Neue', Inter, sans-serif; font-size:24px">Total</span>
+        <span style="font-family:'Bebas Neue', Inter, sans-serif; font-size:30px">{{ totalFmt }}</span>
+      </div>
+      <div style="height:1px; background:#262626; margin:16px 0"></div>
+      <div style="display:grid; gap:6px; font-size:14px; color:#A1A1A1">
+        <div>A nombre de: {{ fNombre }}</div>
+        <div>WhatsApp: {{ fTel }}</div>
+        <div>Entrega: {{ fEntrega }}</div>
+        <sc-if value="{{ esRetiro }}" hint-placeholder-val="{{ false }}">
+          <div>Retirás en: Albatros 14, casa 313 — Punta Alta</div>
+        </sc-if>
+        <sc-if value="{{ esBahia }}" hint-placeholder-val="{{ false }}">
+          <div>Domicilio: {{ fDomicilio }}</div>
+        </sc-if>
+        <sc-if value="{{ esOtra }}" hint-placeholder-val="{{ false }}">
+          <div>Domicilio: {{ fDomicilio }}</div>
+          <div>CP {{ fCp }} — {{ fProvincia }}</div>
+        </sc-if>
+        <div>Pago: Transferencia 💵</div>
+        <div>Comprobante: {{ fComprobante }}</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px; border:1px solid #262626; border-radius:10px; padding:16px">
+      <sc-if value="{{ envioPendiente }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px; color:#F59E0B; line-height:1.5">Mandando tu comprobante...</div>
+      </sc-if>
+      <sc-if value="{{ envioOkFlag }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px; color:#22C55E; line-height:1.5">Comprobante enviado✅</div>
+      </sc-if>
+      <sc-if value="{{ envioFallo }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px; color:#EF4444; line-height:1.5">No pude subir el comprobante. Mandámelo por mensaje 📩</div>
+      </sc-if>
+      <sc-if value="{{ envioSinConfigurar }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px; color:#F59E0B; line-height:1.5">[CONFIGURAR API_URL — ver SETUP.md]</div>
+      </sc-if>
+      <div style="font-size:14px; color:#A1A1A1; line-height:1.5; margin-top:8px">Cualquier duda me escribís 📩</div>
+    </div>
+
+    <button onClick="{{ terminar }}" style="width:100%; margin-top:22px; background:#161616; border:1px solid #262626; color:#FAFAFA; border-radius:10px; padding:16px; font-size:15px; font-weight:600; cursor:pointer" style-hover="border-color:#A1A1A1">Seguir mirando</button>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:900}}">
+const CATALOGO = [
+  { sku:"SKU_001", nombre:"Buzo Jordan", categoria:"Buzos", talle:"L", calce:"va para un XL", estado:"10/10", precio:30000, oferta:false, estado_stock:"disponible", fotos:["img/SKU_001_1.jpg","img/SKU_001_2.jpg","img/SKU_001_3.jpg"] },
+  { sku:"SKU_003", nombre:"Campera Puma x Ferrari", categoria:"Camperas", talle:"L", calce:null, estado:"10/10", precio:115000, oferta:false, estado_stock:"disponible", fotos:["img/SKU_003_1.jpg"] },
+  { sku:"SKU_002", nombre:"Remera DC", categoria:"Remeras", talle:"M", calce:null, estado:"10/10", precio:20000, oferta:true, estado_stock:"disponible", fotos:["img/SKU_002_1.jpg"] },
+  { sku:"SKU_004", nombre:"Pantalón Nike", categoria:"Pantalones", talle:"S/M", calce:null, estado:"9/10", precio:10000, oferta:false, estado_stock:"disponible", fotos:["img/SKU_004_1.jpg"] },
+  { sku:"SKU_005", nombre:"Jogger Jordan Basketball", categoria:"Pantalones", talle:"M", calce:null, estado:"9/10", precio:30000, oferta:false, estado_stock:"disponible", fotos:["img/SKU_005_1.jpg","img/SKU_005_2.jpg"] },
+  { sku:"SKU_006", nombre:"Buzo Adidas Trefoil", categoria:"Buzos", talle:"M", calce:"va para un L", estado:"10/10", precio:30000, oferta:false, estado_stock:"disponible", fotos:["img/SKU_006_1.jpg"] },
+  { sku:"SKU_030", nombre:"Buzo Jordan Negro", categoria:"Buzos", talle:"M", calce:null, estado:"10/10", precio:30000, oferta:false, estado_stock:"disponible", fotos:["img/SKU_030_1.jpg"] }
+];
+
+const CATS = ["Buzos","Camperas","Pantalones","Remeras","Zapatillas","Accesorios"];
+const TALLES = ["S","M","L","XL"];
+// URL de la App Web de Google Apps Script (ver SETUP.md).
+// Recibe los pedidos con el comprobante y devuelve qué prendas están vendidas.
+const API_URL = "";
+
+const PROVINCIAS = ["Buenos Aires","CABA","Catamarca","Chaco","Chubut","Córdoba","Corrientes","Entre Ríos","Formosa","Jujuy","La Pampa","La Rioja","Mendoza","Misiones","Neuquén","Río Negro","Salta","San Juan","San Luis","Santa Cruz","Santa Fe","Santiago del Estero","Tierra del Fuego","Tucumán"];
+const FEMENINAS = ["campera","remera","riñonera","chomba","parka","gorra"];
+
+class Component extends DCLogic {
+  state = {
+    ruta: "home", sku: null,
+    cats: [], talles: [], carrito: [],
+    busqueda: "", verBusqueda: false, verCarrito: false,
+    nombre: "", tel: "", entrega: "",
+    cp: "", provincia: "", localidad: "", domicilio: "", obs: "",
+    comprobante: "",
+    nro: "", envio: "idle", vendidos: []
+  };
+
+  galRef = React.createRef();
+  archivo = null;
+
+  // Próximo drop: viernes 20:00. Cambiar el día (5 = viernes) o la hora acá.
+  proximoDrop() {
+    const d = new Date();
+    d.setHours(20, 0, 0, 0);
+    const dias = (5 - d.getDay() + 7) % 7;
+    d.setDate(d.getDate() + dias);
+    if (d.getTime() <= Date.now()) d.setDate(d.getDate() + 7);
+    return d;
+  }
+
+  mensajeVenta(items) {
+    const s = this.state;
+    const esRetiro = s.entrega === "Retiro en Punta Alta";
+    const esBahia = s.entrega === "Envío a Bahía Blanca";
+    const prendas = items.map(x => {
+      const k = x.categoria === "Zapatillas" ? "Talla" : "Talle";
+      return x.nombre + " | " + k + " " + x.talle + " | $" + x.precio.toLocaleString("en-US");
+    }).join("\n");
+    const localidad = esBahia ? "Bahía Blanca" : (esRetiro ? "Punta Alta" : s.localidad);
+    const domicilio = esRetiro ? "Albatros 14, casa 313" : s.domicilio;
+    const cp = esBahia ? "8000" : (esRetiro ? "8109" : s.cp);
+    const linea = domicilio + ", " + localidad + " (CP " + cp + ")";
+    return "🛒 VENTA NUEVA\n" + s.nombre + " — " + s.tel + "\n" + prendas +
+      "\n\n📦 " + s.entrega + "\n" + linea;
+  }
+
+  cargarStock() {
+    if (!API_URL) return;
+    fetch(API_URL + "?accion=stock")
+      .then(r => r.json())
+      .then(d => { if (d && Array.isArray(d.vendidos)) this.setState({ vendidos: d.vendidos }); })
+      .catch(() => { /* si falla, sigue con el catálogo local */ });
+  }
+
+  enviarPedido(nro, items, subtotal) {
+    if (!API_URL) { this.setState({ envio: "sin-configurar" }); return; }
+    const s = this.state;
+    this.setState({ envio: "enviando" });
+
+    const mandar = adjunto => fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        accion: "pedido",
+        pedido: nro,
+        nombre: s.nombre,
+        telefono: s.tel,
+        entrega: s.entrega,
+        domicilio: s.domicilio,
+        localidad: s.localidad,
+        codigo_postal: s.cp,
+        provincia: s.provincia,
+        observaciones: s.obs,
+        skus: items.map(x => x.sku),
+        prendas: items.map(x => x.sku + " " + x.nombre + " (" + x.talle + ") $" + x.precio).join(" | "),
+        total: "$" + subtotal.toLocaleString("en-US"),
+        comprobante: adjunto
+      })
+    })
+      .then(r => r.json())
+      .then(d => { this.setState({ envio: d && d.ok ? "ok" : "error" }); this.cargarStock(); })
+      .catch(() => this.setState({ envio: "error" }));
+
+    if (this.archivo) {
+      const fr = new FileReader();
+      fr.onload = () => mandar({
+        nombre: this.archivo.name,
+        tipo: this.archivo.type || "application/octet-stream",
+        datos: String(fr.result).split(",")[1]
+      });
+      fr.onerror = () => mandar(null);
+      fr.readAsDataURL(this.archivo);
+    } else {
+      mandar(null);
+    }
+  }
+
+  deslizar(dir, e) {
+    const boton = e && e.currentTarget;
+    const el = (boton && boton.parentElement && boton.parentElement.querySelector(".noscroll"))
+      || document.querySelector(".noscroll");
+    if (!el) return;
+    const paso = el.clientWidth;
+    el.scrollLeft += dir * paso;
+  }
+
+  componentDidMount() {
+    const vp = document.querySelector('meta[name=viewport]');
+    if (vp) vp.setAttribute('content', 'width=device-width, initial-scale=1, viewport-fit=cover');
+    this.sync();
+    this._h = () => this.sync();
+    window.addEventListener("hashchange", this._h);
+    this._t = setInterval(() => this.forceUpdate(), 1000);
+    this.cargarStock();
+    this._s = setInterval(() => this.cargarStock(), 60000);
+  }
+  componentWillUnmount() { window.removeEventListener("hashchange", this._h); clearInterval(this._t); clearInterval(this._s); }
+
+  sync() {
+    const m = (window.location.hash || "").match(/#\/p\/([A-Za-z0-9_-]+)/);
+    if (m) {
+      const sku = m[1].toUpperCase().replace(/-/g, "_");
+      if (CATALOGO.some(p => p.sku === sku)) { this.setState({ ruta: "producto", sku }); return; }
+    }
+    if (this.state.ruta === "producto") this.setState({ ruta: "home", sku: null });
+  }
+
+  ir(sku) { window.location.hash = "#/p/" + sku; this.setState({ ruta: "producto", sku }); window.scrollTo(0, 0); }
+  home() { window.location.hash = ""; this.setState({ ruta: "home", sku: null }); window.scrollTo(0, 0); }
+
+  esFem(p) { return FEMENINAS.some(w => p.nombre.toLowerCase().includes(w)); }
+
+  badge(p) {
+    if (p.estado_stock === "señado") return this.esFem(p) ? "SEÑADA🚫" : "SEÑADO🚫";
+    if (p.estado_stock === "vendido") return this.esFem(p) ? "VENDIDA🚫" : "Vendido🚫";
+    return "Disponible✅";
+  }
+  precioFmt(p) {
+    const n = "$" + p.precio.toLocaleString("en-US");
+    return p.oferta ? n + " 🎁" : n;
+  }
+  talleLabel(p) {
+    const k = p.categoria === "Zapatillas" ? "Talla" : "Talle";
+    return k + ": " + p.talle + (p.calce ? " (" + p.calce + ")" : "");
+  }
+  view(p) {
+    return {
+      sku: p.sku, nombre: p.nombre, estado: p.estado, foto: p.fotos[0],
+      talleLabel: this.talleLabel(p), precioFmt: this.precioFmt(p),
+      badge: this.badge(p),
+      libre: p.estado_stock === "disponible",
+      vendido: p.estado_stock !== "disponible",
+      abrir: () => this.ir(p.sku)
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const q = s.busqueda.trim().toLowerCase();
+    const filtra = p =>
+      (q === "" || (p.nombre + " " + p.categoria + " " + p.sku).toLowerCase().includes(q)) &&
+      (s.cats.length === 0 || s.cats.includes(p.categoria)) &&
+      (s.talles.length === 0 || s.talles.some(t => String(p.talle).toUpperCase().split("/").includes(t)));
+
+    const CAT = CATALOGO.map(p => s.vendidos.includes(p.sku) ? Object.assign({}, p, { estado_stock: "vendido" }) : p);
+    const lista = CAT.filter(filtra);
+    const orden = lista.filter(p => p.estado_stock === "disponible").concat(lista.filter(p => p.estado_stock !== "disponible"));
+
+    const toggle = (key, v) => () => {
+      const arr = this.state[key];
+      this.setState({ [key]: arr.includes(v) ? arr.filter(x => x !== v) : arr.concat(v) });
+    };
+    const chip = (key) => (v) => {
+      const on = this.state[key].includes(v);
+      return { label: v, on, off: !on, toggle: toggle(key, v) };
+    };
+
+    const p = CAT.find(x => x.sku === s.sku);
+    const rel = p ? CAT.filter(x => x.sku !== p.sku && x.estado_stock === "disponible" &&
+      (x.categoria === p.categoria || x.talle === p.talle)).slice(0, 4) : [];
+    const relFinal = (p && rel.length < 3)
+      ? rel.concat(CAT.filter(x => x.sku !== p.sku && x.estado_stock === "disponible" && !rel.includes(x)).slice(0, 4 - rel.length))
+      : rel;
+
+    const pick = (key, v) => () => this.setState({ [key]: v });
+    const opt = (key, v) => ({ label: v, on: this.state[key] === v, off: this.state[key] !== v, pick: pick(key, v) });
+
+    const pideDireccion = s.entrega === "Envío a Bahía Blanca" || s.entrega === "Envío a otra ciudad";
+    const digitos = s.tel.replace(/\D/g, "");
+    const telOk = digitos.length >= 10 && digitos.length <= 13;
+    const telError = s.tel.length > 0 && !telOk;
+    const esBahia = s.entrega === "Envío a Bahía Blanca";
+    const esOtra = s.entrega === "Envío a otra ciudad";
+    const esRetiro = s.entrega === "Retiro en Punta Alta";
+    const envioOk = !pideDireccion
+      || (esBahia && !!s.domicilio.trim())
+      || (esOtra && !!(s.cp.trim().length >= 4 && s.provincia && s.localidad.trim() && s.domicilio.trim()));
+    const resta = Math.max(0, this.proximoDrop().getTime() - Date.now());
+    const dos = n => String(n).padStart(2, "0");
+    const dd = dos(Math.floor(resta / 86400000));
+    const hh = dos(Math.floor(resta / 3600000) % 24);
+    const mm = dos(Math.floor(resta / 60000) % 60);
+    const ss = dos(Math.floor(resta / 1000) % 60);
+
+    const items = s.carrito.map(k => CAT.find(x => x.sku === k)).filter(Boolean);
+    const subtotal = items.reduce((a, x) => a + x.precio, 0);
+    const listo = !!(items.length && s.nombre.trim() && telOk && s.entrega && envioOk && s.comprobante);
+
+    return {
+      esHome: s.ruta === "home",
+      esProducto: s.ruta === "producto",
+      esCheckout: s.ruta === "checkout",
+      esListo: s.ruta === "listo",
+
+      vista: orden.map(x => this.view(x)),
+      sinResultados: orden.length === 0,
+      chipsCat: CATS.map(chip("cats")),
+      chipsTalle: TALLES.map(chip("talles")),
+      hayFiltros: s.cats.length > 0 || s.talles.length > 0,
+      limpiarFiltros: () => this.setState({ cats: [], talles: [] }),
+
+      galRef: this.galRef,
+      variasFotos: !!p && p.fotos.length > 1,
+      fotoAnterior: e => this.deslizar(-1, e),
+      fotoSiguiente: e => this.deslizar(1, e),
+      galeria: p ? p.fotos.map((f, i) => React.createElement("div", {
+        key: f,
+        style: { flex: "0 0 100%", scrollSnapAlign: "center", display: "flex", justifyContent: "center", padding: "0 6px", boxSizing: "border-box" }
+      }, React.createElement("img", {
+        src: f, alt: p.nombre + " foto " + (i + 1),
+        style: { width: "100%", maxWidth: "400px", aspectRatio: "3/4", objectFit: "cover", background: "#1E1E1E", borderRadius: "10px" }
+      }))) : null,
+      miniatura: p ? React.createElement("img", {
+        src: p.fotos[0], alt: p.nombre,
+        style: { flex: "0 0 64px", width: "64px", aspectRatio: "3/4", objectFit: "cover", background: "#1E1E1E", borderRadius: "6px" }
+      }) : null,
+      miniaturaChica: p ? React.createElement("img", {
+        src: p.fotos[0], alt: p.nombre,
+        style: { flex: "0 0 56px", width: "56px", aspectRatio: "3/4", objectFit: "cover", background: "#1E1E1E", borderRadius: "6px" }
+      }) : null,
+      pFoto: p ? p.fotos[0] : "",
+      hayFoto: !!(p && p.fotos[0]),
+      pNombre: p ? p.nombre : "",
+      pEstado: p ? p.estado : "",
+      pTalleLabel: p ? this.talleLabel(p) : "",
+      pPrecioFmt: p ? this.precioFmt(p) : "",
+      pBadge: p ? this.badge(p) : "",
+      pLibre: !!p && p.estado_stock === "disponible",
+      pVendido: !!p && p.estado_stock !== "disponible",
+      relacionadas: relFinal.map(x => this.view(x)),
+
+      irHome: () => this.home(),
+      terminar: () => {
+        this.setState({ carrito: [], nombre: "", tel: "", entrega: "", cp: "", provincia: "", localidad: "", domicilio: "", obs: "", comprobante: "", envio: "idle" });
+        this.home();
+      },
+      irCheckout: () => { this.setState({ ruta: "checkout", verCarrito: false, verBusqueda: false }); window.scrollTo(0, 0); },
+      volverProducto: () => { if (p) { this.setState({ ruta: "producto" }); window.scrollTo(0, 0); } else this.home(); },
+
+      fNombre: s.nombre, fTel: s.tel, fEntrega: s.entrega,
+      fCp: s.cp, fProvincia: s.provincia, fDomicilio: s.domicilio, fObs: s.obs,
+      fComprobante: s.comprobante,
+      setNombre: e => this.setState({ nombre: e.target.value }),
+      setTel: e => this.setState({ tel: e.target.value.replace(/[^\d\s+()-]/g, "").slice(0, 20) }),
+      setCp: e => this.setState({ cp: e.target.value.replace(/\D/g, "").slice(0, 5) }),
+      setProvincia: e => this.setState({ provincia: e.target.value }),
+      setLocalidad: e => this.setState({ localidad: e.target.value }),
+      fLocalidad: s.localidad,
+      setDomicilio: e => this.setState({ domicilio: e.target.value }),
+      setObs: e => this.setState({ obs: e.target.value }),
+      setComprobante: e => {
+        const f = e.target.files && e.target.files[0];
+        this.archivo = f || null;
+        this.setState({ comprobante: f ? f.name : "" });
+      },
+      quitarComprobante: () => { this.archivo = null; this.setState({ comprobante: "" }); },
+      hayComprobante: !!s.comprobante,
+      sinComprobante: !s.comprobante,
+      opcEntrega: ["Retiro en Punta Alta", "Envío a Bahía Blanca", "Envío a otra ciudad"].map(v => opt("entrega", v)),
+
+      dropDias: dd, dropHoras: hh, dropMin: mm, dropSeg: ss,
+      enTienda: s.ruta === "home" || s.ruta === "producto",
+      verBusqueda: s.verBusqueda,
+      verCarrito: s.verCarrito && s.carrito.length > 0,
+      carritoPanelVacio: s.verCarrito && s.carrito.length === 0,
+      fBusqueda: s.busqueda,
+      setBusqueda: e => this.setState({ busqueda: e.target.value }),
+      toggleBusqueda: () => this.setState(st => ({ verBusqueda: !st.verBusqueda, verCarrito: false })),
+      toggleCarrito: () => this.setState(st => ({ verCarrito: !st.verCarrito, verBusqueda: false })),
+      cerrarCarrito: () => this.setState({ verCarrito: false }),
+      cartCount: s.carrito.length,
+      hayCarrito: s.carrito.length > 0,
+      carritoVacio: s.carrito.length === 0,
+      enCarrito: !!p && s.carrito.includes(p.sku),
+      fueraCarrito: !!p && !s.carrito.includes(p.sku),
+      agregar: () => { if (p) this.setState(st => ({ carrito: st.carrito.includes(p.sku) ? st.carrito : st.carrito.concat(p.sku), verCarrito: true })); },
+      comprar: () => {
+        if (p) this.setState(st => ({ carrito: st.carrito.includes(p.sku) ? st.carrito : st.carrito.concat(p.sku), ruta: "checkout" }));
+        else this.setState({ ruta: "checkout" });
+        window.scrollTo(0, 0);
+      },
+      carritoVista: items.map(x => ({
+        nombre: x.nombre,
+        meta: x.sku.replace("_", " ") + " · 1 × " + this.precioFmt(x),
+        precioFmt: this.precioFmt(x),
+        thumb: React.createElement("img", {
+          src: x.fotos[0], alt: x.nombre,
+          style: { flex: "0 0 72px", width: "72px", aspectRatio: "3/4", objectFit: "cover", background: "#1E1E1E", borderRadius: "8px" }
+        }),
+        quitar: () => this.setState(st => ({ carrito: st.carrito.filter(k => k !== x.sku) }))
+      })),
+      subtotalFmt: "$" + subtotal.toLocaleString("en-US"),
+      totalFmt: "$" + subtotal.toLocaleString("en-US"),
+      envioLabel: s.entrega ? (esRetiro ? "Gratis" : "A coordinar") : "—",
+      envioGratis: esRetiro,
+      envioACoordinar: !esRetiro,
+      provincias: PROVINCIAS,
+      telError, telOk,
+      pideDireccion, esBahia, esOtra, esRetiro, listo, falta: !listo,
+      nroPedido: s.nro,
+      confirmar: () => {
+        const nro = "CH-" + String(1000 + Math.floor(Math.random() * 9000));
+        const vendidos = s.vendidos.concat(items.map(x => x.sku).filter(k => !s.vendidos.includes(k)));
+        this.setState({ ruta: "listo", nro, vendidos });
+        window.scrollTo(0, 0);
+        this.enviarPedido(nro, items, subtotal);
+      },
+      envioPendiente: s.envio === "enviando",
+      envioOkFlag: s.envio === "ok",
+      envioFallo: s.envio === "error",
+      envioSinConfigurar: s.envio === "sin-configurar"
+    };
+  }
+}
+</script>
+</body>
+</html>
