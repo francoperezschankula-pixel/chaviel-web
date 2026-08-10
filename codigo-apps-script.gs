@@ -10,6 +10,9 @@
 // Es lo que aparece en la URL de la carpeta: drive.google.com/drive/folders/ESTO_DE_ACA
 var CARPETA_COMPROBANTES = 'PEGAR_ID_DE_CARPETA';
 
+// Aviso por WhatsApp de cada venta nueva. Dejar vacío para desactivarlo.
+var AVISO_WHATSAPP = 'https://test1-n8n.w9bbus.easypanel.host/webhook/CHAVIEL-VENTA';
+
 function hoja_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var h = ss.getSheetByName('Pedidos');
@@ -66,8 +69,37 @@ function doPost(e) {
       d.codigo_postal, d.provincia, d.observaciones, link, 'nuevo'
     ]);
 
+    avisarVenta_(d, link);
+
     return json_({ ok: true, pedido: d.pedido });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
+  }
+}
+
+/** Manda el aviso de venta al WhatsApp del dueño. Si falla, el pedido igual queda guardado. */
+function avisarVenta_(d, link) {
+  if (!AVISO_WHATSAPP) return;
+  try {
+    UrlFetchApp.fetch(AVISO_WHATSAPP, {
+      method: 'post',
+      contentType: 'application/json; charset=utf-8',
+      muteHttpExceptions: true,
+      payload: JSON.stringify({
+        pedido: d.pedido,
+        nombre: d.nombre,
+        telefono: d.telefono,
+        prendas: d.prendas,
+        skus: d.skus || [],
+        total: d.total,
+        entrega: d.entrega,
+        domicilio: d.domicilio,
+        localidad: d.localidad,
+        provincia: d.provincia,
+        comprobante: link
+      })
+    });
+  } catch (err) {
+    console.error('No se pudo avisar la venta por WhatsApp: ' + err);
   }
 }

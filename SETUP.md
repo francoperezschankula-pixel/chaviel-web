@@ -40,6 +40,10 @@ Listo. Desde ahí:
 - Cada pedido cae como fila en la planilla.
 - El comprobante se guarda en la carpeta de Drive, con el link en la fila.
 - La prenda queda `Vendido🚫` para todos.
+- Te llega un WhatsApp con el aviso de la venta (cliente, prenda, entrega y link al comprobante).
+
+> El aviso por WhatsApp sale de la variable `AVISO_WHATSAPP` que está arriba de todo del código.
+> Ya viene configurada. Si alguna vez querés apagarla, dejala vacía: `var AVISO_WHATSAPP = '';`
 
 Para volver a poner una prenda a la venta, escribí `cancelado` en la columna **Estado** de esa fila.
 
