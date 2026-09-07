@@ -14,31 +14,34 @@ Claude. Instagram bloquea las conexiones que vienen de servidores y responde
 Necesitás Python instalado. Después, en una terminal:
 
 ```
-pip install instaloader
+pip install instaloader browser_cookie3
 ```
 
-En Windows, si `pip` no anda, probá:
-
-```
-py -m pip install instaloader
-```
+En Windows, si `pip` no anda, probá `py -m pip install instaloader browser_cookie3`.
 
 ---
 
 ## 2. Bajar las publicaciones
 
-Parate en la carpeta del proyecto y corré:
+Entrá a Instagram desde tu navegador y dejá la sesión iniciada. Después, parado
+en la carpeta del proyecto:
 
 ```
-python3 herramientas/descargar-instagram.py lux.sportt -n 15 -u TU_USUARIO_DE_INSTAGRAM
+python3 herramientas/descargar-instagram.py lux.sportt -n 15 -b chrome
 ```
 
 - `lux.sportt` es la cuenta de la que querés bajar.
 - `-n 15` son cuántas publicaciones, desde la más nueva hacia atrás.
-- `-u TU_USUARIO_DE_INSTAGRAM` es **tu** usuario. Te va a pedir la contraseña la
-  primera vez y guarda la sesión, así no la pide de nuevo.
+- `-b chrome` usa la sesión que ya tenés abierta en el navegador. **No te pide la
+  contraseña ni la guarda en ningún lado.** Cambiá `chrome` por el que uses:
+  `firefox`, `edge`, `brave`, `opera`, `safari`, `vivaldi`, `chromium`,
+  `librewolf`, `opera_gx`.
 
-Sin `-u` casi seguro falla: hoy Instagram no deja ver perfiles sin estar logueado.
+Si preferís no usar las cookies del navegador, está la alternativa `-u TU_USUARIO`,
+que te pide la contraseña por teclado y guarda la sesión para no volver a pedirla.
+No uses las dos opciones juntas.
+
+Sin `-b` ni `-u` casi seguro falla: hoy Instagram no deja ver perfiles sin sesión.
 
 Otras opciones:
 
@@ -73,10 +76,10 @@ Si me pasás las fotos ya bajadas, te las renombro y te cargo los productos yo.
 
 | Mensaje | Qué hacer |
 |---|---|
-| `429 Too Many Requests` | Esperá unos minutos y volvé a intentar. Si sigue, usá `-u TU_USUARIO`. |
-| `La cuenta es privada` | Seguí la cuenta con tu usuario y volvé a correrlo con `-u`. |
-| `No se pudo iniciar sesión` | Entrá a Instagram desde el navegador, confirmá el aviso de "inicio de sesión sospechoso" y reintentá. |
-| `Falta la librería instaloader` | Volvé al paso 1. |
+| `429 Too Many Requests` | Te falta la sesión. Corrélo con `-b chrome`. Si ya lo hacés, esperá unos minutos. |
+| `No se pudieron usar las cookies` | Entrá a instagram.com en ese navegador y verificá que estés logueado. Si el navegador está abierto, cerralo del todo y reintentá. |
+| `La cuenta es privada` | Seguí la cuenta con tu usuario y volvé a correrlo. |
+| `Falta la librería ...` | Volvé al paso 1. |
 
 ---
 
